@@ -29,3 +29,22 @@ class Perceptron:
             if self.predict(feacher) == target:
                 correct += 1
         return correct / len(y)
+
+    def train(self, X: np.ndarray, y: np.ndarray) -> list[int]:
+        """Train the model and return the number of errors per epoch."""
+        errors_per_epoch: list[int] = []
+        for _ in range(self.epochs):
+            errors = 0
+            for feature, target in zip(X, y):
+                pred = self.predict(feature)
+                error = target - pred
+                if error != 0:
+                    self.w += self.lr * error * feature
+                    self.bias += self.lr * error
+                    errors += 1
+            errors_per_epoch.append(errors)
+            if errors == 0:
+                break
+        return errors_per_epoch
+
+        return errors_per_epoch
