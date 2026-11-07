@@ -1,32 +1,37 @@
-"""Perceptron for binary classification"""
+"""Perceptron for binary classification."""
 
 import numpy as np
 
 
 class Perceptron:
+    """Binary classifier that learns weights by correcting its own mistakes."""
+
     def __init__(
         self, n_features: int, learning_rate: float = 0.1, epochs: int = 50
     ) -> None:
+        """Create a perceptron with zero weights and zero bias."""
         self.w = np.zeros(n_features)
         self.bias: float = 0
         self.epochs = epochs
         self.lr = learning_rate
 
     def activate(self, z: float) -> int:
-        """Return 1 if z >= 0, otherwise 0"""
+        """Return 1 if z >= 0, otherwise 0."""
         if z >= 0:
             return 1
         else:
             return 0
 
     def predict(self, x: np.ndarray) -> int:
+        """Predict the class of a single sample."""
         z = np.dot(self.w, x) + self.bias
         return self.activate(z)
 
-    def score(self, x: np.ndarray, y: np.ndarray) -> float:
+    def score(self, X: np.ndarray, y: np.ndarray) -> float:
+        """Return the share of correctly classified samples."""
         correct = 0
-        for feacher, target in zip(x, y):
-            if self.predict(feacher) == target:
+        for feature, target in zip(X, y):
+            if self.predict(feature) == target:
                 correct += 1
         return correct / len(y)
 
@@ -45,6 +50,4 @@ class Perceptron:
             errors_per_epoch.append(errors)
             if errors == 0:
                 break
-        return errors_per_epoch
-
         return errors_per_epoch
