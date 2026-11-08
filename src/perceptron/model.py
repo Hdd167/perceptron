@@ -11,11 +11,12 @@ class Perceptron:
     ) -> None:
         """Create a perceptron with zero weights and zero bias."""
         self.w = np.zeros(n_features)
-        self.bias: float = 0
+        self.bias: float = 0.0
         self.epochs = epochs
         self.lr = learning_rate
 
-    def activate(self, z: float) -> int:
+    @staticmethod
+    def activate(z: float) -> int:
         """Return 1 if z >= 0, otherwise 0."""
         if z >= 0:
             return 1
@@ -39,15 +40,15 @@ class Perceptron:
         """Train the model and return the number of errors per epoch."""
         errors_per_epoch: list[int] = []
         for _ in range(self.epochs):
-            errors = 0
+            errors_counter = 0
             for feature, target in zip(X, y):
                 pred = self.predict(feature)
                 error = target - pred
                 if error != 0:
                     self.w += self.lr * error * feature
                     self.bias += self.lr * error
-                    errors += 1
-            errors_per_epoch.append(errors)
-            if errors == 0:
+                    errors_counter += 1
+            errors_per_epoch.append(errors_counter)
+            if errors_counter == 0:
                 break
         return errors_per_epoch

@@ -1,6 +1,1 @@
-"""Perceptron package."""
-
-
-def main() -> None:
-    """Run the program."""
-    print("Hello from perceptron!")
+"""Perceptron for binary classification."""
