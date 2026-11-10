@@ -1,6 +1,7 @@
 """Tests for the perceptron model."""
 
 import numpy as np
+import pytest
 
 from perceptron.data import make_clusters
 from perceptron.model import Perceptron
@@ -35,3 +36,29 @@ def test_train_separates_blobs() -> None:
     model = Perceptron(n_features=2)
     model.train(X, y)
     assert model.score(X, y) > 0.95
+
+
+def test_invalid_n_features() -> None:
+    """A non-positive feature count is rejected."""
+    with pytest.raises(ValueError):
+        Perceptron(0)
+
+
+def test_invalid_learning_rate() -> None:
+    """A non-positive learning rate is rejected."""
+    with pytest.raises(ValueError):
+        Perceptron(2, learning_rate=0)
+
+
+def test_predict_wrong_sample_size() -> None:
+    """Predict rejects a sample with the wrong number of features."""
+    p = Perceptron(2)
+    with pytest.raises(ValueError):
+        p.predict(np.array([1.0, 2.0, 3.0]))
+
+
+def test_train_mismatched_lengths() -> None:
+    """Train rejects X and y of different lengths."""
+    p = Perceptron(2)
+    with pytest.raises(ValueError):
+        p.train(np.zeros((3, 2)), np.zeros(2))
