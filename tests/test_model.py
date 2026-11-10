@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from perceptron.data import make_clusters
+from perceptron.data import load_iris_binary, make_clusters
 from perceptron.model import Perceptron
 
 
@@ -30,7 +30,7 @@ def test_predict_with_known_weights() -> None:
     assert model.predict(np.array([4.0, 4.0])) == 1
 
 
-def test_train_separates_blobs() -> None:
+def test_train_separates_clusters() -> None:
     """Training on separable data reaches near-perfect accuracy."""
     X, y = make_clusters(200, seed=0, separation=3.0)
     model = Perceptron(n_features=2)
@@ -62,3 +62,30 @@ def test_train_mismatched_lengths() -> None:
     p = Perceptron(2)
     with pytest.raises(ValueError):
         p.train(np.zeros((3, 2)), np.zeros(2))
+
+
+def test_predict_batch_matches_predict() -> None:
+    """Batch prediction matches sample-by-sample prediction."""
+    model = Perceptron(n_features=2)
+    model.w = np.array([1.0, -1.0])
+    model.bias = 0.5
+    X = np.array([[1.0, 0.0], [0.0, 1.0], [2.0, 2.0]])
+    expected = [model.predict(row) for row in X]
+    assert model.predict_batch(X).tolist() == expected
+
+
+def test_train_reduces_errors() -> None:
+    """Training drives the number of mistakes down to zero."""
+    X, y = make_clusters(200, seed=0, separation=3.0)
+    model = Perceptron(n_features=2)
+    errors = model.train(X, y)
+    assert errors[0] >= errors[-1]
+    assert errors[-1] == 0
+
+
+def test_iris_accuracy() -> None:
+    """The perceptron separates setosa from versicolor."""
+    X, y = load_iris_binary()
+    model = Perceptron(n_features=2)
+    model.train(X, y)
+    assert model.score(X, y) > 0.95

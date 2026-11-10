@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
-perceptron = "perceptron:main"
+perceptron = "perceptron.cli:main"
 
 [build-system]
 requires = ["uv_build>=0.13.6,<0.14.0"]
@@ -31,3 +31,7 @@ select = ["E", "F", "I", "D"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[[tool.mypy.overrides]]
+module = ["sklearn.*"]
+ignore_missing_imports = true

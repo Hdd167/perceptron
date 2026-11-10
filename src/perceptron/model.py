@@ -36,14 +36,19 @@ class Perceptron:
         z = np.dot(self.w, x) + self.bias
         return self.activate(z)
 
+    def predict_batch(self, X: np.ndarray) -> np.ndarray:
+        """Predict the class of many samples at once."""
+        if X.ndim != 2 or X.shape[1] != len(self.w):
+            raise ValueError(
+                f"X must be a 2D array with {len(self.w)} columns, got shape {X.shape}"
+            )
+        z = X @ self.w + self.bias
+        return (z >= 0).astype(int)
+
     def score(self, X: np.ndarray, y: np.ndarray) -> float:
         """Return the share of correctly classified samples."""
         self.check_data(X, y)
-        correct = 0
-        for feature, target in zip(X, y):
-            if self.predict(feature) == target:
-                correct += 1
-        return correct / len(y)
+        return float(np.mean(self.predict_batch(X) == y))
 
     def train(self, X: np.ndarray, y: np.ndarray) -> list[int]:
         """Train the model and return the number of errors per epoch."""
